@@ -7,5 +7,6 @@ RSpec.describe Deck do
     let(:deck) { Deck.new }
 
     it { is_expected.to have(52).items }
+    it { expect(subject.first).to be_kind_of(Card) }
   end
 end

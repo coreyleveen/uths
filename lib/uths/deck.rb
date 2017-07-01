@@ -1,9 +1,13 @@
+require "uths/card"
+
 class Deck
   SUITS = %w(Spades Clubs Diamonds Hearts)
   RANKS = Array(2..14)
 
   def initialize
-    @cards = SUITS.product(RANKS)
+    @cards = SUITS.product(RANKS).map do |comb|
+      Card.new(suit: comb.first, rank: comb.last)
+    end
   end
 
   def shuffle
