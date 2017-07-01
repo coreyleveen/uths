@@ -1,5 +1,9 @@
 require "bundler/setup"
+require "rspec/collection_matchers"
+require "pry"
+
 require "uths"
+require "uths/deck"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
