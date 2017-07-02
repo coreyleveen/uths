@@ -4,6 +4,7 @@ require "pry"
 
 require "uths"
 require "uths/deck"
+require "uths/hand"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
