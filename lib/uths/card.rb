@@ -1,4 +1,6 @@
 class Card
+  include Comparable
+
   def initialize(suit:, rank:)
     @suit = suit
     @rank = rank
@@ -8,6 +10,10 @@ class Card
 
   def to_s
     "#{humanized_rank} of #{suit}"
+  end
+
+  def <=>(other_card)
+    rank <=> other_card.rank
   end
 
   private

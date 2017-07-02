@@ -26,4 +26,12 @@ RSpec.describe Card do
       it { is_expected.to eq("5 of Hearts") }
     end
   end
+
+  describe "#<=>" do
+    let(:queen) { Card.new(suit: "Hearts", rank: 12) }
+    let(:jack)  { Card.new(suit: "Hearts", rank: 11) }
+
+    it { expect(queen).to be > jack }
+    it { expect(jack).to be < queen }
+  end
 end
