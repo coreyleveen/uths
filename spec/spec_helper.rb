@@ -6,6 +6,12 @@ require "uths"
 require "uths/deck"
 require "uths/hand"
 
+
+Deck.new.shuffle.each do |card|
+  meth = card.to_s.downcase.gsub(" ", "_")
+  define_method(meth) { card }
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"

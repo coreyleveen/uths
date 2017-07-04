@@ -23,7 +23,7 @@ RSpec.describe Card do
     context "when the rank is a non-face card" do
       let(:card) { Card.new(suit: "Hearts", rank: 5) }
 
-      it { is_expected.to eq("5 of Hearts") }
+      it { is_expected.to eq("Five of Hearts") }
     end
   end
 
