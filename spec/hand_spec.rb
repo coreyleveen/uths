@@ -1,49 +1,55 @@
 require "spec_helper"
 
 RSpec.describe Hand do
-  let(:hand) { Hand.new(pocket: pocket_cards) }
-  let(:pocket_cards) { [card_1, card_2] }
-  let(:card_1) { ten_of_hearts }
-  let(:card_2) { nine_of_hearts }
-
-
-  describe "#pocket_pair?" do
-    subject { hand.pocket_pair? }
-
-    context "when both cards have the same rank" do
-      let(:card_2) { ten_of_spades }
-
-      it { is_expected.to be(true) }
-    end
-
-    context "when both cards have differing rank" do
-      it { is_expected.to be(false) }
-    end
-  end
-
-  describe "#high_card" do
-    subject { hand.pocket_high_card }
-
-    let(:card_2) { king_of_spades }
-
-    it { is_expected.to eq(card_2) }
-  end
+  let(:hand) { Hand.new(cards) }
 
   describe "#best_hand" do
     subject { hand.best_hand }
 
-    before { hand.table_cards = table_cards }
+    let(:pocket) { [ten_of_hearts, nine_of_hearts] }
+    let(:cards) { pocket + table_cards }
 
     context "high card" do
-      let(:table_cards) { [two_of_diamonds, four_of_clubs, six_of_spades] }
+      context "pre-flop" do
+        let(:table_cards) { [] }
 
-      it { is_expected.to eq(:high_card) }
+        it { is_expected.to eq(high_card: ten_of_hearts, rest: [nine_of_hearts]) }
+      end
+
+      context "flop" do
+        let(:table_cards) { [four_of_clubs, two_of_spades, ace_of_hearts] }
+        let(:expected) do
+          {
+            high_card: ace_of_hearts,
+            rest: [ten_of_hearts, nine_of_hearts, four_of_clubs, two_of_spades]
+          }
+        end
+
+        it { is_expected.to eq(expected) }
+      end
+
+      context "river" do
+        let(:table_cards) do
+          [four_of_clubs, two_of_spades, ace_of_hearts, six_of_diamonds, jack_of_clubs]
+        end
+
+        let(:expected) do
+          {
+            high_card: ace_of_hearts,
+            rest: [
+              jack_of_clubs,
+              ten_of_hearts,
+              nine_of_hearts,
+              six_of_diamonds,
+              four_of_clubs,
+              two_of_spades
+            ]
+          }
+        end
+      end
     end
 
     context "pair" do
-      let(:table_cards) { [ten_of_spades, two_of_diamonds, four_of_clubs] }
-
-      it { is_expected.to eq(:pair) }
     end
 
     context "two pair" do
@@ -75,7 +81,52 @@ RSpec.describe Hand do
     end
 
     context "royal flush" do
+      let(:pocket) { [ten_of_hearts, jack_of_hearts] }
 
+      context "flop" do
+        let(:table_cards) { [queen_of_hearts, ace_of_hearts, king_of_hearts] }
+        let(:royal_flush) do
+          {
+            royal_flush: [
+              ace_of_hearts,
+              king_of_hearts,
+              queen_of_hearts,
+              jack_of_hearts,
+              ten_of_hearts
+            ],
+            rest: []
+          }
+        end
+
+        it { is_expected.to eq(royal_flush) }
+      end
+
+      context "river" do
+        let(:table_cards) do
+          [
+            queen_of_hearts,
+            ace_of_hearts,
+            king_of_hearts,
+            eight_of_diamonds,
+            four_of_clubs
+          ]
+        end
+
+        let(:royal_flush) do
+          {
+            royal_flush: [
+              ace_of_hearts,
+              king_of_hearts,
+              queen_of_hearts,
+              jack_of_hearts,
+              ten_of_hearts
+            ],
+            rest: [eight_of_diamonds, four_of_clubs]
+          }
+        end
+
+        it { is_expected.to eq(royal_flush) }
+      end
     end
   end
 end
