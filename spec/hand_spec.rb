@@ -9,7 +9,7 @@ RSpec.describe Hand do
     let(:pocket) { [ten_of_hearts, nine_of_hearts] }
     let(:cards) { pocket + table_cards }
 
-    context "high card" do
+    xcontext "high card" do
       context "pre-flop" do
         let(:table_cards) { [] }
 
@@ -77,7 +77,52 @@ RSpec.describe Hand do
     end
 
     context "straight flush" do
+      let(:pocket) { [ace_of_spades, two_of_spades] }
 
+      context "flop" do
+        let(:table_cards) { [three_of_spades, four_of_spades, five_of_spades] }
+        let(:straight_flush) do
+          {
+            straight_flush: [
+              five_of_spades,
+              four_of_spades,
+              three_of_spades,
+              two_of_spades,
+              ace_of_spades
+            ],
+            rest: []
+          }
+        end
+
+        it { is_expected.to eq(straight_flush) }
+      end
+
+      xcontext "river" do
+        let(:table_cards) do
+          [
+            three_of_spades,
+            four_of_spades,
+            five_of_spades,
+            six_of_spades,
+            ten_of_hearts
+          ]
+        end
+
+        let(:straight_flush) do
+          {
+            straight_flush: [
+              two_of_spades,
+              three_of_spades,
+              four_of_spades,
+              five_of_spades,
+              six_of_spades
+            ],
+            rest: [ace_of_spades, ten_of_hearts]
+          }
+        end
+
+        it { is_expected.to eq(straight_flush) }
+      end
     end
 
     context "royal flush" do

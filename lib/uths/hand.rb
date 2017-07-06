@@ -12,6 +12,11 @@ class Hand
         royal_flush: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = straight_flush
+      {
+        straight_flush: best,
+        rest: (cards - best).sort.reverse
+      }
     end
   end
 
@@ -29,27 +34,49 @@ class Hand
     end
   end
 
+  def straight_flush
+    if flush?
+      if cards.count == 5
+        straight_flush = [
+          send("five_of_#{flush_suit}"),
+          send("four_of_#{flush_suit}"),
+          send("three_of_#{flush_suit}"),
+          send("two_of_#{flush_suit}"),
+          send("ace_of_#{flush_suit}")
+        ]
+
+        return straight_flush if straight_flush.all?
+      end
+    end
+  end
+
   def royal_flush
-    if suit = suit_with_five_cards
+    if flush?
       royal_flush = [
-        send("ace_of_#{suit}"),
-        send("king_of_#{suit}"),
-        send("queen_of_#{suit}"),
-        send("jack_of_#{suit}"),
-        send("ten_of_#{suit}")
+        send("ace_of_#{flush_suit}"),
+        send("king_of_#{flush_suit}"),
+        send("queen_of_#{flush_suit}"),
+        send("jack_of_#{flush_suit}"),
+        send("ten_of_#{flush_suit}")
       ]
 
       royal_flush.all? && royal_flush
     end
   end
 
-  def suit_with_five_cards
+  def flush?
+    !!flush_suit
+  end
+
+  def flush_suit
     # Occurs with with any flush hand
+
+    return nil unless cards.count >= 5
 
     suits = cards.map(&:suit)
 
-    Uths::SUITS.detect do |suit|
-      suits.count(suit) >= 5
-    end&.downcase&.to_sym
+    @flush_suit ||= Uths::SUITS.detect do |suit|
+                      suits.count(suit) >= 5
+                    end&.downcase&.to_sym
   end
 end
