@@ -21,6 +21,11 @@ class Hand
         quads: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = trips
+      {
+        trips: best,
+        rest: (cards - best).sort.reverse
+      }
     end
   end
 
@@ -38,12 +43,19 @@ class Hand
     end
   end
 
-  def quads
-    quads = cards.select do |card|
-      ranks.count { |rank| rank == card.rank  } == 4
-    end
+  def trips
+    trips = repeating_cards(n: 3)
 
-    if quads
+    if trips.any?
+      remaining = cards - trips
+      [*trips, *remaining.last(2)].sort.reverse
+    end
+  end
+
+  def quads
+    quads = repeating_cards(n: 4)
+
+    if quads.any?
       kicker = (cards - quads).max
       [*quads, kicker]
     end
@@ -91,8 +103,15 @@ class Hand
     end
   end
 
-  def consecutive?(cards)
-    Array(ranks.min..ranks.max) == ranks
+  def repeating_cards(n:)
+    cards.select do |card|
+      ranks.count { |rank| rank == card.rank } == n
+    end
+  end
+
+  def consecutive?(set)
+    range = set.min.rank..set.max.rank
+    Array(range) == set.map(&:rank)
   end
 
   def flush?

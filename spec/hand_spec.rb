@@ -56,8 +56,31 @@ RSpec.describe Hand do
 
     end
 
-    context "three of a kind" do
+    context "trips" do
+      let(:pocket) { [king_of_diamonds, king_of_spades] }
+      let(:table_cards) do
+        [
+          king_of_clubs,
+          eight_of_hearts,
+          three_of_clubs,
+          two_of_hearts,
+          five_of_spades
+        ]
+      end
+      let(:trips) do
+        {
+          trips: [
+            king_of_diamonds,
+            king_of_clubs,
+            king_of_spades,
+            eight_of_hearts,
+            five_of_spades
+          ],
+          rest: [three_of_clubs, two_of_hearts]
+        }
+      end
 
+      it { is_expected.to eq(trips) }
     end
 
     context "straight" do
