@@ -1,10 +1,9 @@
 class Hand
   def initialize(cards)
-    @cards = cards
+    @cards = cards.sort
   end
 
-  attr_accessor :cards
-
+  attr_reader :cards
 
   def best_hand
     if best = royal_flush
@@ -46,6 +45,18 @@ class Hand
         ]
 
         return straight_flush if straight_flush.all?
+
+        if consecutive?(cards)
+          cards
+        end
+      else
+        last_five  = cards.last(5)
+        middle     = cards[1...-1]
+        first_five = cards.first(5)
+
+        [last_five, middle, first_five].detect do |set|
+          consecutive?(set)
+        end
       end
     end
   end
@@ -62,6 +73,11 @@ class Hand
 
       royal_flush.all? && royal_flush
     end
+  end
+
+  def consecutive?(cards)
+    ranks = cards.map(&:rank)
+    Array(ranks.min..ranks.max) == ranks
   end
 
   def flush?

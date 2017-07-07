@@ -97,7 +97,7 @@ RSpec.describe Hand do
         it { is_expected.to eq(straight_flush) }
       end
 
-      xcontext "river" do
+      context "river" do
         let(:table_cards) do
           [
             three_of_spades,
