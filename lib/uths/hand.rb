@@ -16,6 +16,11 @@ class Hand
         straight_flush: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = quads
+      {
+        quads: best,
+        rest: (cards - best).sort.reverse
+      }
     end
   end
 
@@ -30,6 +35,17 @@ class Hand
         card.rank == hand_card.rank &&
           card.suit == hand_card.suit
       end
+    end
+  end
+
+  def quads
+    quads = cards.select do |card|
+      ranks.count { |rank| rank == card.rank  } == 4
+    end
+
+    if quads
+      kicker = (cards - quads).max
+      [*quads, kicker]
     end
   end
 
@@ -76,7 +92,6 @@ class Hand
   end
 
   def consecutive?(cards)
-    ranks = cards.map(&:rank)
     Array(ranks.min..ranks.max) == ranks
   end
 
@@ -94,5 +109,9 @@ class Hand
     @flush_suit ||= Uths::SUITS.detect do |suit|
                       suits.count(suit) >= 5
                     end&.downcase&.to_sym
+  end
+
+  def ranks
+    @ranks ||= cards.map(&:rank)
   end
 end

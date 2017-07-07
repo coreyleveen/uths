@@ -73,7 +73,30 @@ RSpec.describe Hand do
     end
 
     context "quads" do
+      let(:pocket) { [three_of_diamonds, eight_of_hearts] }
+      let(:table_cards) do
+        [
+          three_of_spades,
+          three_of_clubs,
+          three_of_hearts,
+          jack_of_clubs,
+          king_of_spades
+        ]
+      end
+      let(:quads) do
+        {
+          quads: [
+            three_of_spades,
+            three_of_clubs,
+            three_of_diamonds,
+            three_of_hearts,
+            king_of_spades
+          ],
+          rest: [jack_of_clubs, eight_of_hearts]
+        }
+      end
 
+      it { is_expected.to eq(quads) }
     end
 
     context "straight flush" do
