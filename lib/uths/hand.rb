@@ -6,6 +6,8 @@ class Hand
   attr_reader :cards
 
   def best_hand
+    # Refactor this...
+
     if best = royal_flush
       {
         royal_flush: best,
@@ -24,6 +26,11 @@ class Hand
     elsif best = full_house
       {
         full_house: best,
+        rest: (cards - best).sort.reverse
+      }
+    elsif best = flush
+      {
+        flush: best,
         rest: (cards - best).sort.reverse
       }
     elsif best = straight
@@ -77,6 +84,17 @@ class Hand
       end
     elsif consecutive?(cards) || low_straight?
       cards
+    end
+  end
+
+  def flush
+    return unless flush?
+
+    if cards.count == 5
+      cards
+    else
+      suited = cards.select { |card| card.suit.downcase == flush_suit }
+      suited.sort.last(5).reverse
     end
   end
 
@@ -155,7 +173,7 @@ class Hand
 
     @flush_suit ||= Uths::SUITS.detect do |suit|
                       suits.count(suit) >= 5
-                    end&.downcase&.to_sym
+                    end&.downcase
   end
 
   def ranks
