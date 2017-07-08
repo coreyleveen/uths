@@ -21,6 +21,11 @@ class Hand
         quads: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = full_house
+      {
+        full_house: best,
+        rest: (cards - best).sort.reverse
+      }
     elsif best = straight
       {
         straight: best,
@@ -49,9 +54,7 @@ class Hand
   end
 
   def trips
-    trips = repeating_cards(n: 3)
-
-    if trips.any?
+    if trips = repeating_cards(n: 3)
       remaining = cards - trips
       [*trips, *remaining.last(2)].sort.reverse
     end
@@ -77,10 +80,16 @@ class Hand
     end
   end
 
-  def quads
-    quads = repeating_cards(n: 4)
+  def full_house
+    if trips = repeating_cards(n: 3)
+      if pair = repeating_cards(set: cards - trips, n: 2)
+        trips + pair
+      end
+    end
+  end
 
-    if quads.any?
+  def quads
+    if quads = repeating_cards(n: 4)
       kicker = (cards - quads).max
       [*quads, kicker]
     end
@@ -118,10 +127,12 @@ class Hand
     end
   end
 
-  def repeating_cards(n:)
-    cards.select do |card|
+  def repeating_cards(set: @cards, n:)
+    repeating = set.select do |card|
       ranks.count { |rank| rank == card.rank } == n
     end
+
+    repeating.any? ? repeating : nil
   end
 
   def consecutive?(set)

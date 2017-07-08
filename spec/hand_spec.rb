@@ -135,7 +135,50 @@ RSpec.describe Hand do
     end
 
     context "full house" do
+      let(:pocket) { [two_of_spades, three_of_clubs] }
 
+      context "flop" do
+        let(:table_cards) { [two_of_diamonds, three_of_spades, three_of_hearts] }
+        let(:full_house) do
+          {
+            full_house: [
+              three_of_spades,
+              three_of_hearts,
+              three_of_clubs,
+              two_of_spades,
+              two_of_diamonds
+            ],
+            rest: []
+          }
+        end
+
+        it { is_expected.to eq(full_house) }
+      end
+
+      context "river" do
+        let(:table_cards) do
+          [
+            two_of_diamonds,
+            three_of_spades,
+            three_of_hearts,
+            jack_of_hearts,
+            queen_of_hearts
+          ]
+        end
+
+        let(:full_house) do
+          {
+            full_house: [
+              three_of_spades,
+              three_of_hearts,
+              three_of_clubs,
+              two_of_spades,
+              two_of_diamonds
+            ],
+            rest: [queen_of_hearts, jack_of_hearts]
+          }
+        end
+      end
     end
 
     context "quads" do
