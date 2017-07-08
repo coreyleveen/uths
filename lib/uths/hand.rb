@@ -21,6 +21,11 @@ class Hand
         quads: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = straight
+      {
+        straight: best,
+        rest: (cards - best).sort.reverse
+      }
     elsif best = trips
       {
         trips: best,
@@ -52,6 +57,26 @@ class Hand
     end
   end
 
+  def straight
+    if cards.count == 7
+      last_five  = cards.last(5)
+      middle     = cards[1...-1]
+      first_five = cards.first(5)
+
+      higher_straight = [last_five, middle, first_five].detect do |set|
+        consecutive?(set)
+      end
+
+      return higher_straight if higher_straight
+
+      if low_straight?
+        [cards.last, *cards.first(4)]
+      end
+    elsif consecutive?(cards) || low_straight?
+      cards
+    end
+  end
+
   def quads
     quads = repeating_cards(n: 4)
 
@@ -64,17 +89,7 @@ class Hand
   def straight_flush
     if flush?
       if cards.count == 5
-        straight_flush = [
-          send("five_of_#{flush_suit}"),
-          send("four_of_#{flush_suit}"),
-          send("three_of_#{flush_suit}"),
-          send("two_of_#{flush_suit}"),
-          send("ace_of_#{flush_suit}")
-        ]
-
-        return straight_flush if straight_flush.all?
-
-        if consecutive?(cards)
+        if low_straight? || consecutive?(cards)
           cards
         end
       else
@@ -114,13 +129,15 @@ class Hand
     Array(range) == set.map(&:rank)
   end
 
+  def low_straight?
+    [14, 2, 3, 4, 5].all? { |rank| ranks.include?(rank) }
+  end
+
   def flush?
     !!flush_suit
   end
 
   def flush_suit
-    # Occurs with with any flush hand
-
     return nil unless cards.count >= 5
 
     suits = cards.map(&:suit)
