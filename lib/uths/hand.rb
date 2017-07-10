@@ -68,7 +68,7 @@ class Hand
   end
 
   def straight
-    if cards.count == 7
+    if river?
       last_five  = cards.last(5)
       middle     = cards[1...-1]
       first_five = cards.first(5)
@@ -90,7 +90,7 @@ class Hand
   def flush
     return unless flush?
 
-    if cards.count == 5
+    if flop?
       cards
     else
       suited = cards.select { |card| card.suit.downcase == flush_suit }
@@ -115,7 +115,7 @@ class Hand
 
   def straight_flush
     if flush?
-      if cards.count == 5
+      if flop?
         if low_straight? || consecutive?(cards)
           cards
         end
@@ -145,12 +145,16 @@ class Hand
     end
   end
 
-  def repeating_cards(set: @cards, n:)
+  def repeating_cards(set: cards, n:)
     repeating = set.select do |card|
       ranks.count { |rank| rank == card.rank } == n
     end
 
-    repeating.any? ? repeating : nil
+    if repeating.any?
+      # Only return the highest set of repeating cards
+      max_rank = repeating.max.rank
+      repeating.select { |card| card.rank == max_rank }
+    end
   end
 
   def consecutive?(set)
@@ -174,6 +178,14 @@ class Hand
     @flush_suit ||= Uths::SUITS.detect do |suit|
                       suits.count(suit) >= 5
                     end&.downcase
+  end
+
+  def flop?
+    cards.count == 5
+  end
+
+  def river?
+    cards.count == 7
   end
 
   def ranks

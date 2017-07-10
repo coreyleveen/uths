@@ -185,7 +185,7 @@ RSpec.describe Hand do
             two_of_diamonds,
             three_of_spades,
             three_of_hearts,
-            jack_of_hearts,
+            queen_of_diamonds,
             queen_of_hearts
           ]
         end
@@ -196,12 +196,14 @@ RSpec.describe Hand do
               three_of_spades,
               three_of_hearts,
               three_of_clubs,
-              two_of_spades,
-              two_of_diamonds
+              queen_of_diamonds,
+              queen_of_hearts
             ],
-            rest: [queen_of_hearts, jack_of_hearts]
+            rest: [two_of_spades, two_of_diamonds]
           }
         end
+
+        it { is_expected.to eq(full_house) }
       end
     end
 
