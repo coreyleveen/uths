@@ -1,4 +1,17 @@
 class Hand
+  HANDS = %i(
+    royal_flush
+    straight_flush
+    quads
+    full_house
+    flush
+    straight
+    trips
+    two_pair
+    pair
+    high_card
+  )
+
   def initialize(cards)
     @cards = cards.sort
   end
@@ -6,59 +19,10 @@ class Hand
   attr_reader :cards
 
   def best_hand
-    # Refactor this...
+    best = nil
+    hand = HANDS.detect { |h| best = send(h) }
 
-    if best = royal_flush
-      {
-        royal_flush: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = straight_flush
-      {
-        straight_flush: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = quads
-      {
-        quads: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = full_house
-      {
-        full_house: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = flush
-      {
-        flush: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = straight
-      {
-        straight: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = trips
-      {
-        trips: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = two_pair
-      {
-        two_pair: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = pair
-      {
-        pair: best,
-        rest: (cards - best).sort.reverse
-      }
-    elsif best = high_card
-      {
-        high_card: best,
-        rest: (cards - [best]).sort.reverse
-      }
-    end
+    { hand => best, rest: (cards - Array(best)).sort.reverse }
   end
 
   private
@@ -99,6 +63,8 @@ class Hand
   end
 
   def straight
+    return unless flop? || river?
+
     if river?
       last_five  = cards.last(5)
       middle     = cards[1...-1]
@@ -113,7 +79,7 @@ class Hand
       if low_straight?
         [cards.last, *cards.first(4)]
       end
-    elsif flop? && (consecutive?(cards) || low_straight?)
+    elsif (consecutive?(cards) || low_straight?)
       cards
     end
   end
