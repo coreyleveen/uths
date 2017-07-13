@@ -43,6 +43,16 @@ class Hand
         trips: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = two_pair
+      {
+        two_pair: best,
+        rest: (cards - best).sort.reverse
+      }
+    elsif best = pair
+      {
+        pair: best,
+        rest: (cards - best).sort.reverse
+      }
     end
   end
 
@@ -56,6 +66,18 @@ class Hand
       cards.detect do |hand_card|
         card.rank == hand_card.rank &&
           card.suit == hand_card.suit
+      end
+    end
+  end
+
+  def pair
+    repeating_cards(n: 2)
+  end
+
+  def two_pair
+    if higher_pair = repeating_cards(n: 2)
+      if lower_pair = repeating_cards(set: cards - higher_pair, n: 2)
+        higher_pair + lower_pair
       end
     end
   end
