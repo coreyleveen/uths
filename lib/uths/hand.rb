@@ -53,6 +53,11 @@ class Hand
         pair: best,
         rest: (cards - best).sort.reverse
       }
+    elsif best = high_card
+      {
+        high_card: best,
+        rest: (cards - [best]).sort.reverse
+      }
     end
   end
 
@@ -68,6 +73,10 @@ class Hand
           card.suit == hand_card.suit
       end
     end
+  end
+
+  def high_card
+    cards.max
   end
 
   def pair
@@ -104,7 +113,7 @@ class Hand
       if low_straight?
         [cards.last, *cards.first(4)]
       end
-    elsif consecutive?(cards) || low_straight?
+    elsif flop? && (consecutive?(cards) || low_straight?)
       cards
     end
   end

@@ -8,7 +8,7 @@ RSpec.describe Hand do
 
     let(:cards) { pocket + table_cards }
 
-    xcontext "high card" do
+    context "high card" do
       let(:pocket) { [ten_of_hearts, nine_of_hearts] }
 
       context "pre-flop" do
