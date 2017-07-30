@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "rspec/collection_matchers"
+require "rspec/its"
 require "pry"
 
 require "uths"

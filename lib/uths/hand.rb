@@ -1,4 +1,6 @@
 class Hand
+  include Comparable
+
   HANDS = %i(
     royal_flush
     straight_flush
@@ -12,17 +14,39 @@ class Hand
     high_card
   )
 
-  def initialize(cards)
-    @cards = cards.sort
+  class << self
+    def call(cards)
+      new(cards).call
+    end
   end
 
-  attr_reader :cards
+  attr_reader :cards, :best, :type
 
-  def best_hand
-    best = nil
-    hand = HANDS.detect { |h| best = send(h) }
+  def initialize(cards)
+    @cards = cards.sort
+    @type = nil
+    @best = nil
+  end
 
-    { hand => best, rest: (cards - Array(best)).sort.reverse }
+  def call
+    @type = HANDS.detect { |h| @best = send(h) }
+
+    self
+  end
+
+  def <=>(other_hand)
+    hand_name = best_hand.keys.first
+    other_hand_name = other_hand.best_hand.keys.first
+
+    if hand_name != other_hand_name
+      HANDS.reverse.index(hand_name) <=> HANDS.reverse.index(other_hand_name)
+    else
+      best_hand[hand_name].max <=> other_hand.best_hand[other_hand_name].max
+    end
+  end
+
+  def rest
+    @rest ||= (cards - best).reverse
   end
 
   private
@@ -40,7 +64,7 @@ class Hand
   end
 
   def high_card
-    cards.max
+    [cards.max]
   end
 
   def pair
@@ -50,7 +74,8 @@ class Hand
   def two_pair
     if higher_pair = repeating_cards(n: 2)
       if lower_pair = repeating_cards(set: cards - higher_pair, n: 2)
-        higher_pair + lower_pair
+        two_pair = higher_pair + lower_pair
+        two_pair << (cards - two_pair).max
       end
     end
   end

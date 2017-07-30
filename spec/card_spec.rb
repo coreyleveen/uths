@@ -30,8 +30,10 @@ RSpec.describe Card do
   describe "#<=>" do
     let(:queen) { Card.new(suit: "Hearts", rank: 12) }
     let(:jack)  { Card.new(suit: "Hearts", rank: 11) }
+    let(:other_queen) { Card.new(suit: "Clubs", rank: 12) }
 
     it { expect(queen).to be > jack }
     it { expect(jack).to be < queen }
+    it { expect(other_queen).to eq(queen) }
   end
 end
