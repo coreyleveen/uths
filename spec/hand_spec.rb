@@ -96,66 +96,51 @@ RSpec.describe Hand do
     end
   end
 
-  xdescribe "#<=>" do
-    let(:hand_a) { Hand.new(straight) }
-    let(:hand_b) { Hand.new(trips) }
+  describe "#<=>" do
+    let(:hand_a) { Hand.call(straight) }
+    let(:hand_b) { Hand.call(trips) }
 
-    let(:straight) do
-      [
-        five_of_clubs,
-        six_of_spades,
-        seven_of_hearts,
-        eight_of_diamonds,
-        nine_of_clubs,
-        jack_of_hearts,
-        ace_of_spades
-      ]
-    end
-    let(:trips) do
-      [
-        five_of_spades,
-        five_of_diamonds,
-        five_of_hearts,
-        eight_of_diamonds,
-        ten_of_diamonds
-      ]
-    end
+    let(:straight) { [five_of_clubs, six_of_spades, seven_of_hearts, eight_of_diamonds, nine_of_clubs, jack_of_hearts, ace_of_spades] }
+    let(:trips) { [five_of_spades, five_of_diamonds, five_of_hearts, eight_of_diamonds, ten_of_diamonds] }
 
     it { expect(hand_a).to be > hand_b }
 
     context "when the hands are the same type" do
-      let(:hand_a) { Hand.new(high_straight) }
-      let(:hand_b) { Hand.new(low_straight) }
+      let(:hand_a) { Hand.call(high_straight) }
+      let(:hand_b) { Hand.call(low_straight) }
+
       let(:high_straight) { [nine_of_diamonds, two_of_clubs] + table_cards }
       let(:low_straight) { [three_of_hearts, jack_of_diamonds] + table_cards }
-
-      let(:table_cards) do
-        [
-          four_of_spades,
-          five_of_diamonds,
-          six_of_hearts,
-          seven_of_clubs,
-          eight_of_spades
-        ]
-      end
+      let(:table_cards) { [four_of_spades, five_of_diamonds, six_of_hearts, seven_of_clubs, eight_of_spades] }
 
       it { expect(hand_a).to be > hand_b }
 
+      context "and the kicker matters" do
+        let(:hand_a) { Hand.call(two_pair) }
+        let(:hand_b) { Hand.call(other_two_pair) }
+
+        let(:two_pair) { [five_of_hearts, king_of_diamonds] + table_cards }
+        let(:other_two_pair) { [five_of_spades, king_of_hearts] + table_cards }
+        let(:table_cards) { [three_of_hearts, three_of_clubs, five_of_clubs, nine_of_hearts, queen_of_clubs] }
+
+        context "and the kicker is the same rank" do
+          it { expect(hand_a).to eq(hand_b) }
+        end
+
+        context "and the kicker is a different rank" do
+          let(:other_two_pair) { [five_of_spades, eight_of_clubs] + table_cards }
+
+          it { expect(hand_a).to be > hand_b }
+        end
+      end
+
       context "and the max card value cannot be used to determine hand strength" do
-        let(:hand_a) { Hand.new(high_full_house) }
-        let(:hand_b) { Hand.new(low_full_house) }
+        let(:hand_a) { Hand.call(high_full_house) }
+        let(:hand_b) { Hand.call(low_full_house) }
+
         let(:high_full_house) { [ten_of_hearts, ten_of_diamonds] + table_cards }
         let(:low_full_house) { [ace_of_diamonds, ace_of_spades] + table_cards }
-
-        let(:table_cards) do
-          [
-            two_of_spades,
-            two_of_clubs,
-            two_of_diamonds,
-            ten_of_spades,
-            eight_of_clubs
-          ]
-        end
+        let(:table_cards) { [two_of_spades, two_of_clubs, two_of_diamonds, ten_of_spades, eight_of_clubs] }
 
         it { expect(hand_a).to be > hand_b }
       end

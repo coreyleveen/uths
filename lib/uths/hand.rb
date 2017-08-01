@@ -20,12 +20,13 @@ class Hand
     end
   end
 
-  attr_reader :cards, :best, :type
+  attr_reader :cards, :best, :type, :determinant
 
   def initialize(cards)
     @cards = cards.sort
     @type = nil
     @best = nil
+    @determinant = nil
   end
 
   def call
@@ -35,13 +36,12 @@ class Hand
   end
 
   def <=>(other_hand)
-    hand_name = best_hand.keys.first
-    other_hand_name = other_hand.best_hand.keys.first
-
-    if hand_name != other_hand_name
-      HANDS.reverse.index(hand_name) <=> HANDS.reverse.index(other_hand_name)
+    if type != other_hand.type
+      HANDS.reverse.index(type) <=> HANDS.reverse.index(other_hand.type)
+    elsif determinant != other_hand.determinant
+      determinant.max <=> other_hand.determinant.max
     else
-      best_hand[hand_name].max <=> other_hand.best_hand[other_hand_name].max
+      best.max <=> other_hand.best.max
     end
   end
 
@@ -74,14 +74,15 @@ class Hand
   def two_pair
     if higher_pair = repeating_cards(n: 2)
       if lower_pair = repeating_cards(set: cards - higher_pair, n: 2)
-        two_pair = higher_pair + lower_pair
-        two_pair << (cards - two_pair).max
+        @determinant = higher_pair + lower_pair
+        [*@determinant, (cards - @determinant).max]
       end
     end
   end
 
   def trips
     if trips = repeating_cards(n: 3)
+      @determinant = trips
       remaining = cards - trips
       [*trips, *remaining.last(2)].sort.reverse
     end
@@ -122,6 +123,8 @@ class Hand
 
   def full_house
     if trips = repeating_cards(n: 3)
+      @determinant = trips
+
       if pair = repeating_cards(set: cards - trips, n: 2)
         trips + pair
       end
@@ -130,6 +133,7 @@ class Hand
 
   def quads
     if quads = repeating_cards(n: 4)
+      @determinant = quads
       kicker = (cards - quads).max
       [*quads, kicker]
     end
@@ -169,13 +173,13 @@ class Hand
 
   def repeating_cards(set: cards, n:)
     repeating = set.select do |card|
-      ranks.count { |rank| rank == card.rank } == n
+      ranks.count { |rank| rank == card.rank } >= n
     end
 
     if repeating.any?
       # Only return the highest set of repeating cards
       max_rank = repeating.max.rank
-      repeating.select { |card| card.rank == max_rank }
+      repeating.select { |card| card.rank == max_rank }.take(n)
     end
   end
 
@@ -195,11 +199,9 @@ class Hand
   def flush_suit
     return nil unless cards.count >= 5
 
-    suits = cards.map(&:suit)
-
-    @flush_suit ||= Uths::SUITS.detect do |suit|
-                      suits.count(suit) >= 5
-                    end&.downcase
+    Uths::SUITS.detect do |suit|
+      suits.count(suit) >= 5
+    end&.downcase
   end
 
   def flop?
@@ -211,6 +213,10 @@ class Hand
   end
 
   def ranks
-    @ranks ||= cards.map(&:rank)
+    cards.map(&:rank)
+  end
+
+  def suits
+    cards.map(&:suit)
   end
 end
