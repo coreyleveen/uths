@@ -15,4 +15,8 @@ class Card
   def <=>(other_card)
     rank <=> other_card.rank
   end
+
+  Uths::RANK_MAP.each do |k, v|
+    define_method("#{v}?") { rank == k }
+  end
 end

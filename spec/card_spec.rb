@@ -36,4 +36,18 @@ RSpec.describe Card do
     it { expect(jack).to be < queen }
     it { expect(other_queen).to eq(queen) }
   end
+
+  describe "rank methods" do
+    subject { card.two? }
+
+    context "when the card has a rank of two" do
+      let(:card) { Card.new(suit: "Spades", rank: 2) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the card does not have a rank of two" do
+      it { is_expected.to eq(false) }
+    end
+  end
 end
