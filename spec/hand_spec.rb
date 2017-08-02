@@ -146,4 +146,86 @@ RSpec.describe Hand do
       end
     end
   end
+
+  describe "#pre_flop?" do
+    subject { hand.pre_flop? }
+
+    let(:hand) { Hand.call(cards) }
+
+    context "when the hand has two cards" do
+      let(:cards) { [ace_of_spades, two_of_hearts] }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hand has more than two cards" do
+      let(:cards) { [ace_of_spades, two_of_hearts, three_of_clubs, eight_of_diamonds, nine_of_spades] }
+
+      it { is_expected.to be(false) }
+    end
+  end
+
+  describe "#flop?" do
+    subject { hand.flop? }
+
+    let(:hand) { Hand.call(cards) }
+
+    context "when the hand has five cards" do
+      let(:cards) { [ace_of_spades, two_of_hearts, three_of_clubs, eight_of_diamonds, nine_of_spades] }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hand has more than five cards" do
+      let(:cards) do
+        [
+          ace_of_spades,
+          two_of_hearts,
+          three_of_clubs,
+          eight_of_diamonds,
+          nine_of_spades,
+          four_of_diamonds,
+          ten_of_spades
+        ]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe "#river?" do
+    subject { hand.river? }
+
+    let(:hand) { Hand.call(cards) }
+
+    context "when the hand has seven cards" do
+      let(:cards) do
+        [
+          ace_of_spades,
+          two_of_hearts,
+          three_of_clubs,
+          eight_of_diamonds,
+          nine_of_spades,
+          four_of_diamonds,
+          ten_of_spades
+        ]
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hand has less than seven cards" do
+      let(:cards) do
+        [
+          ace_of_spades,
+          two_of_hearts,
+          three_of_clubs,
+          nine_of_spades,
+          ten_of_spades
+        ]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end

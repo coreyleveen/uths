@@ -49,6 +49,18 @@ class Hand
     @rest ||= (cards - best).reverse
   end
 
+  def pre_flop?
+    cards.count == 2
+  end
+
+  def flop?
+    cards.count == 5
+  end
+
+  def river?
+    cards.count == 7
+  end
+
   private
 
   # Define some convenience methods, e.g. two_of_hearts,
@@ -202,14 +214,6 @@ class Hand
     Uths::SUITS.detect do |suit|
       suits.count(suit) >= 5
     end&.downcase
-  end
-
-  def flop?
-    cards.count == 5
-  end
-
-  def river?
-    cards.count == 7
   end
 
   def ranks
