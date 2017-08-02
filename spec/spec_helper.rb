@@ -6,6 +6,7 @@ require "pry"
 require "uths"
 require "uths/deck"
 require "uths/hand"
+require "uths/player"
 
 
 Deck.new.shuffle.each do |card|
