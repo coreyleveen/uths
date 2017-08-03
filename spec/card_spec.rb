@@ -49,5 +49,13 @@ RSpec.describe Card do
     context "when the card does not have a rank of two" do
       it { is_expected.to eq(false) }
     end
+
+    context "without the question mark" do
+      subject { card.two }
+
+      let(:card) { Card.new(suit: "Spades", rank: 2) }
+
+      it { is_expected.to eq(true) }
+    end
   end
 end

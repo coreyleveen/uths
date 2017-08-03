@@ -1,16 +1,19 @@
 class Player
 
-  attr_reader :chips
-  attr_accessor :hand
+  attr_accessor :hand, :chips
 
-  def initialize(chips:)
-    @chips = chips
-    @hand = nil
+  def initialize(chips:, strategy:)
+    @chips    = chips
+    @strategy = strategy
+    @hand     = nil
   end
 
-  # def bet?
-    # if hand.pre_flop?
-      # pre_flop_bet?
-    # end
-  # end
+  def bet?
+    strategy.hand = hand
+    strategy.bet?
+  end
+
+  private
+
+  attr_reader :strategy
 end

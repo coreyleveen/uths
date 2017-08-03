@@ -18,5 +18,6 @@ class Card
 
   Uths::RANK_MAP.each do |k, v|
     define_method("#{v}?") { rank == k }
+    define_method(v) { rank == k }
   end
 end
