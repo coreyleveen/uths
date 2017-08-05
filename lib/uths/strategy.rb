@@ -9,6 +9,8 @@ class Strategy
   def bet?
     if hand.pre_flop?
       passing_pre_flop?
+    elsif hand.flop?
+      passing_flop?
     else
       false
     end
@@ -20,6 +22,14 @@ class Strategy
 
   def passing_pre_flop?
     passing_suited? || passing_unsuited? || passing_pair?
+  end
+
+  def passing_flop?
+    passing_hand?
+  end
+
+  def passing_hand?
+    hand.better_or_equal_to?(config.dig(:flop, :hand_type))
   end
 
   def passing_suited?

@@ -1,8 +1,10 @@
 require "spec_helper"
 
 RSpec.describe Hand do
+  let(:hand) { Hand.call(cards) }
+
   describe ".call" do
-    subject { Hand.call(cards) }
+    subject { hand }
 
     let(:cards) { pocket + table_cards }
     let(:pocket) { [ten_of_hearts, nine_of_hearts] }
@@ -147,10 +149,40 @@ RSpec.describe Hand do
     end
   end
 
+  describe "#pocket" do
+    subject { hand.pocket }
+
+    let(:cards) { [ace_of_spades, three_of_clubs, four_of_spades, jack_of_diamonds, queen_of_clubs] }
+
+    it { is_expected.to eq([ace_of_spades, three_of_clubs]) }
+  end
+
+  describe "#better_or_equal_to?" do
+    subject { hand.better_or_equal_to?(type) }
+
+    let(:type) { :two_pair }
+
+    context "when the hand is better than the type given" do
+      let(:cards) { [ace_of_spades, two_of_diamonds, three_of_hearts, four_of_spades, five_of_clubs] }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hand is the same as the type given" do
+      let(:cards) { [two_of_diamonds, two_of_clubs, three_of_clubs, three_of_hearts, five_of_clubs] }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hand is worse than the type given" do
+      let(:cards) { [two_of_clubs, two_of_spades, three_of_hearts, four_of_spades, five_of_clubs] }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   describe "#pre_flop?" do
     subject { hand.pre_flop? }
-
-    let(:hand) { Hand.call(cards) }
 
     context "when the hand has two cards" do
       let(:cards) { [ace_of_spades, two_of_hearts] }
@@ -167,8 +199,6 @@ RSpec.describe Hand do
 
   describe "#flop?" do
     subject { hand.flop? }
-
-    let(:hand) { Hand.call(cards) }
 
     context "when the hand has five cards" do
       let(:cards) { [ace_of_spades, two_of_hearts, three_of_clubs, eight_of_diamonds, nine_of_spades] }
@@ -195,8 +225,6 @@ RSpec.describe Hand do
 
   describe "#river?" do
     subject { hand.river? }
-
-    let(:hand) { Hand.call(cards) }
 
     context "when the hand has seven cards" do
       let(:cards) do

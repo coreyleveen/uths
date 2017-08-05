@@ -1,12 +1,12 @@
 class Card
   include Comparable
 
+  attr_reader :suit, :rank
+
   def initialize(suit:, rank:)
     @suit = suit
     @rank = rank
   end
-
-  attr_reader :suit, :rank
 
   def to_s
     "#{Uths::RANK_MAP[rank].capitalize} of #{suit}"

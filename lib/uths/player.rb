@@ -1,5 +1,4 @@
 class Player
-
   attr_accessor :hand, :chips
 
   def initialize(chips:, strategy:)

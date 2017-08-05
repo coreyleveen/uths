@@ -17,6 +17,9 @@ RSpec.describe Strategy do
             jack: 10
           },
           pair: 3
+        },
+        flop: {
+          hand_type: :two_pair
         }
       }
     end
@@ -115,8 +118,20 @@ RSpec.describe Strategy do
       end
     end
 
-    xcontext "flop" do
+    context "flop" do
+      context "when there is a two pair or better" do
+        let(:cards) { [five_of_spades, six_of_diamonds, six_of_diamonds, five_of_spades, jack_of_diamonds] }
 
+        it { is_expected.to eq(true) }
+      end
+
+      context "when there is not a two pair or better" do
+        let(:cards) { [five_of_spades, six_of_diamonds, eight_of_spades, nine_of_hearts, jack_of_diamonds] }
+
+        it { is_expected.to eq(false) }
+      end
+
+      context "
     end
 
     xcontext "river" do

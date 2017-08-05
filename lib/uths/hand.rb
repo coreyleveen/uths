@@ -20,12 +20,13 @@ class Hand
     end
   end
 
-  attr_reader :cards, :best, :type, :determinant
+  attr_reader :pocket, :cards, :best, :type, :determinant
 
   def initialize(cards)
-    @cards = cards.sort
-    @type = nil
-    @best = nil
+    @pocket      = cards.first(2)
+    @cards       = cards.sort
+    @type        = nil
+    @best        = nil
     @determinant = nil
   end
 
@@ -47,6 +48,10 @@ class Hand
 
   def rest
     @rest ||= (cards - best).reverse
+  end
+
+  def better_or_equal_to?(hand_type)
+    HANDS.reverse.index(type) >= HANDS.reverse.index(hand_type)
   end
 
   def pre_flop?
