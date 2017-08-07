@@ -54,6 +54,16 @@ class Hand
     HANDS.reverse.index(type) >= HANDS.reverse.index(hand_type)
   end
 
+  def hidden_pair_only
+    return if pocket_pair || repeating_cards(set: cards - pocket, n: 2)
+
+    repeating_cards(n: 2)
+  end
+
+  def pocket_pair
+    repeating_cards(set: pocket, n: 2)
+  end
+
   def pre_flop?
     cards.count == 2
   end
@@ -190,7 +200,7 @@ class Hand
 
   def repeating_cards(set: cards, n:)
     repeating = set.select do |card|
-      ranks.count { |rank| rank == card.rank } >= n
+      set.map(&:rank).count { |rank| rank == card.rank } >= n
     end
 
     if repeating.any?

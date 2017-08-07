@@ -181,6 +181,51 @@ RSpec.describe Hand do
     end
   end
 
+  describe "#hidden_pair_only" do
+    subject { hand.hidden_pair_only }
+
+    let(:cards) { pocket + table_cards }
+    let(:table_cards) { [six_of_hearts, nine_of_spades, ten_of_diamonds] }
+
+    context "when there is a hidden pair only" do
+      let(:pocket) { [six_of_diamonds, four_of_clubs] }
+
+      it { is_expected.to eq([six_of_diamonds, six_of_hearts]) }
+
+      context "and there is an open pair" do
+        let(:pocket) { [six_of_diamonds, four_of_clubs] }
+        let(:table_cards) { [six_of_hearts, nine_of_spades, nine_of_clubs] }
+
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "when there is not a hidden pair" do
+      let(:pocket) { [two_of_diamonds, two_of_clubs] }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe "#pocket_pair" do
+    subject { hand.pocket_pair }
+
+    let(:cards) { pocket + table_cards }
+    let(:table_cards) { [six_of_hearts, nine_of_spades, ten_of_diamonds] }
+
+    context "when there is a pocket pair" do
+      let(:pocket) { [two_of_spades, two_of_diamonds] }
+
+      it { is_expected.to eq(pocket) }
+    end
+
+    context "when there is not a pocket pair" do
+      let(:pocket) { [three_of_hearts, six_of_hearts] }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe "#pre_flop?" do
     subject { hand.pre_flop? }
 

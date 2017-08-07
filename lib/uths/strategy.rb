@@ -25,11 +25,23 @@ class Strategy
   end
 
   def passing_flop?
-    passing_hand?
+    passing_hand? || passing_pocket_pair? || passing_hidden_pair?
   end
 
   def passing_hand?
     hand.better_or_equal_to?(config.dig(:flop, :hand_type))
+  end
+
+  def passing_pocket_pair?
+    return false unless pair = hand.pocket_pair
+
+    pair.first.rank >= config.dig(:flop, :pocket_pair)
+  end
+
+  def passing_hidden_pair?
+    return false unless pair = hand.hidden_pair_only
+
+    pair.first.rank >= config.dig(:flop, :hidden_pair)
   end
 
   def passing_suited?

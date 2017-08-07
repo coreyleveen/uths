@@ -19,7 +19,9 @@ RSpec.describe Strategy do
           pair: 3
         },
         flop: {
-          hand_type: :two_pair
+          hand_type: :two_pair,
+          hidden_pair: 2,
+          pocket_pair: 3
         }
       }
     end
@@ -119,19 +121,50 @@ RSpec.describe Strategy do
     end
 
     context "flop" do
+      let(:cards) { pocket + table_cards }
+
       context "when there is a two pair or better" do
-        let(:cards) { [five_of_spades, six_of_diamonds, six_of_diamonds, five_of_spades, jack_of_diamonds] }
+        let(:pocket) { [five_of_spades, six_of_diamonds] }
+        let(:table_cards) { [six_of_diamonds, five_of_spades, jack_of_diamonds] }
 
         it { is_expected.to eq(true) }
       end
 
       context "when there is not a two pair or better" do
-        let(:cards) { [five_of_spades, six_of_diamonds, eight_of_spades, nine_of_hearts, jack_of_diamonds] }
+        let(:pocket) { [five_of_spades, six_of_diamonds] }
+        let(:table_cards) { [eight_of_spades, nine_of_hearts, jack_of_diamonds] }
 
         it { is_expected.to eq(false) }
       end
 
-      context "
+      context "when there is a hidden pair" do
+        let(:table_cards) { [five_of_spades, six_of_diamonds, nine_of_hearts] }
+
+        context "and it's a pocket pair" do
+          let(:pocket) { [three_of_spades, three_of_clubs] }
+
+          it { is_expected.to eq(true) }
+
+          context "and it's pocket deuces" do
+            let(:pocket) { [two_of_spades, two_of_clubs] }
+
+            it { is_expected.to eq(false) }
+          end
+        end
+
+        context "and it's not a pocket pair" do
+          let(:pocket) { [five_of_diamonds, three_of_clubs] }
+
+          it { is_expected.to eq(true) }
+        end
+      end
+
+      context "when there is a shared pair" do
+        let(:pocket) { [three_of_clubs, four_of_spades] }
+        let(:table_cards) { [eight_of_spades, eight_of_diamonds, nine_of_hearts] }
+
+        it { is_expected.to eq(false) }
+      end
     end
 
     xcontext "river" do
