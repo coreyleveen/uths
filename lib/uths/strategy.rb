@@ -25,7 +25,10 @@ class Strategy
   end
 
   def passing_flop?
-    passing_hand? || passing_pocket_pair? || passing_hidden_pair?
+    passing_hand?        ||
+    passing_pocket_pair? ||
+    passing_hidden_pair? ||
+    passing_four_to_flush?
   end
 
   def passing_hand?
@@ -42,6 +45,15 @@ class Strategy
     return false unless pair = hand.hidden_pair_only
 
     pair.first.rank >= config.dig(:flop, :hidden_pair)
+  end
+
+  def passing_four_to_flush?
+    return false unless suit = hand.flush_suit(n: 4)
+
+    hand.pocket.any? do |card|
+      card.rank >= config.dig(:flop, :four_to_flush_hidden) &&
+        card.suit.downcase == suit
+    end
   end
 
   def passing_suited?

@@ -64,6 +64,14 @@ class Hand
     repeating_cards(set: pocket, n: 2)
   end
 
+  def flush_suit(n: 5)
+    return nil unless cards.count >= n
+
+    Uths::SUITS.detect do |suit|
+      suits.count(suit) >= n
+    end&.downcase
+  end
+
   def pre_flop?
     cards.count == 2
   end
@@ -221,14 +229,6 @@ class Hand
 
   def flush?
     !!flush_suit
-  end
-
-  def flush_suit
-    return nil unless cards.count >= 5
-
-    Uths::SUITS.detect do |suit|
-      suits.count(suit) >= 5
-    end&.downcase
   end
 
   def ranks

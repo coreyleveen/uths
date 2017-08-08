@@ -226,6 +226,35 @@ RSpec.describe Hand do
     end
   end
 
+  describe "#flush_suit" do
+    let(:cards) { pocket + table_cards }
+    let(:pocket) { [three_of_hearts, five_of_hearts] }
+
+    context "given a 5-card flush" do
+      subject { hand.flush_suit }
+
+      let(:table_cards) { [six_of_hearts, eight_of_hearts, ten_of_hearts] }
+
+      it { is_expected.to eq("hearts") }
+    end
+
+    context "given four to a flush with an argument passed" do
+      subject { hand.flush_suit(n: 4) }
+
+      let(:table_cards) { [six_of_hearts, eight_of_hearts, two_of_clubs] }
+
+      it { is_expected.to eq("hearts") }
+    end
+
+    context "given four to a flush with no argument passed" do
+      subject { hand.flush_suit }
+
+      let(:table_cards) { [six_of_hearts, eight_of_hearts, two_of_clubs] }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe "#pre_flop?" do
     subject { hand.pre_flop? }
 

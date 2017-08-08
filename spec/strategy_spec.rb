@@ -21,7 +21,8 @@ RSpec.describe Strategy do
         flop: {
           hand_type: :two_pair,
           hidden_pair: 2,
-          pocket_pair: 3
+          pocket_pair: 3,
+          four_to_flush_hidden: 10
         }
       }
     end
@@ -159,11 +160,27 @@ RSpec.describe Strategy do
         end
       end
 
-      context "when there is a shared pair" do
+      context "when there is a shared pair only" do
         let(:pocket) { [three_of_clubs, four_of_spades] }
         let(:table_cards) { [eight_of_spades, eight_of_diamonds, nine_of_hearts] }
 
         it { is_expected.to eq(false) }
+      end
+
+      context "four to a flush" do
+        let(:table_cards) { [four_of_clubs, eight_of_clubs, two_of_clubs] }
+
+        context "with a hidden ten or better to the flush" do
+          let(:pocket) { [three_of_spades, ten_of_clubs] }
+
+          it { is_expected.to eq(true) }
+        end
+
+        context "without a hidden ten or better to the flush" do
+          let(:pocket) { [three_of_spades, nine_of_clubs] }
+
+          it { is_expected.to eq(false) }
+        end
       end
     end
 
