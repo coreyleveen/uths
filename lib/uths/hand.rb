@@ -72,6 +72,12 @@ class Hand
     end&.downcase
   end
 
+  def outs
+    outs = 0
+    possible_out_ranks.each { |rank| outs += 4 - cards.count { |card| rank == card.rank } }
+    outs
+  end
+
   def pre_flop?
     cards.count == 2
   end
@@ -212,7 +218,6 @@ class Hand
     end
 
     if repeating.any?
-      # Only return the highest set of repeating cards
       max_rank = repeating.max.rank
       repeating.select { |card| card.rank == max_rank }.take(n)
     end
@@ -237,5 +242,13 @@ class Hand
 
   def suits
     cards.map(&:suit)
+  end
+
+  def table_cards
+    cards - pocket
+  end
+
+  def possible_out_ranks
+    (table_cards.map(&:rank) + Uths::RANKS.select { |rank| rank > pocket.max.rank }).uniq
   end
 end

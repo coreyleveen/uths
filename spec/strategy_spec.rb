@@ -23,13 +23,18 @@ RSpec.describe Strategy do
           hidden_pair: 2,
           pocket_pair: 3,
           four_to_flush_hidden: 10
+        },
+        river: {
+          hidden_pair: 2,
+          hand_type: :two_pair,
+          outs: 21
         }
       }
     end
 
     before { strategy.hand = hand }
 
-    context "pre flop" do
+    context "pre-flop" do
       context "suited" do
         context "king high" do
           let(:cards) { [king_of_diamonds, two_of_diamonds] }
@@ -184,8 +189,50 @@ RSpec.describe Strategy do
       end
     end
 
-    xcontext "river" do
+    context "river" do
+      let(:cards) { pocket + table_cards }
+      let(:table_cards) do
+        [
+          two_of_spades,
+          nine_of_diamonds,
+          six_of_clubs,
+          queen_of_spades,
+          eight_of_hearts
+        ]
+      end
 
+      context "with a hidden pair" do
+        let(:pocket) { [two_of_diamonds, five_of_hearts] }
+
+        it { is_expected.to eq(true) }
+      end
+
+      context "with a two pair or better" do
+        let(:pocket) { [two_of_diamonds, six_of_hearts] }
+
+        it { is_expected.to eq(true) }
+      end
+
+      context "with less than 21 outs" do
+        let(:pocket) { [king_of_diamonds, ace_of_hearts] }
+
+        it { is_expected.to eq(true) }
+      end
+
+      context "with none of the above" do
+        let(:pocket) { [six_of_spades, nine_of_diamonds] }
+        let(:table_cards) do
+          [
+            king_of_clubs,
+            seven_of_spades,
+            two_of_spades,
+            ace_of_spades,
+            ten_of_clubs
+          ]
+        end
+
+        it { is_expected.to eq(false) }
+      end
     end
   end
 end

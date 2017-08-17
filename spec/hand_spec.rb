@@ -255,6 +255,16 @@ RSpec.describe Hand do
     end
   end
 
+  describe "#outs" do
+    subject { hand.outs }
+
+    let(:cards) { pocket + table_cards }
+    let(:pocket) { [six_of_spades, nine_of_diamonds] }
+    let(:table_cards) { [king_of_clubs, seven_of_spades, two_of_spades, ace_of_spades, ten_of_clubs] }
+
+    it { is_expected.to eq(23) }
+  end
+
   describe "#pre_flop?" do
     subject { hand.pre_flop? }
 

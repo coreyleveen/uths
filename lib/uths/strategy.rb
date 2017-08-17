@@ -11,8 +11,8 @@ class Strategy
       passing_pre_flop?
     elsif hand.flop?
       passing_flop?
-    else
-      false
+    elsif hand.river?
+      passing_river?
     end
   end
 
@@ -25,13 +25,18 @@ class Strategy
   end
 
   def passing_flop?
-    passing_hand?        ||
-    passing_pocket_pair? ||
-    passing_hidden_pair? ||
-    passing_four_to_flush?
+    passing_flop_hand? || passing_pocket_pair? || passing_hidden_pair? || passing_four_to_flush?
   end
 
-  def passing_hand?
+  def passing_river?
+    passing_river_hand? || passing_river_hidden_pair? || passing_river_outs?
+  end
+
+  def passing_river_hand?
+    hand.better_or_equal_to?(config.dig(:river, :hand_type))
+  end
+
+  def passing_flop_hand?
     hand.better_or_equal_to?(config.dig(:flop, :hand_type))
   end
 
@@ -39,6 +44,16 @@ class Strategy
     return false unless pair = hand.pocket_pair
 
     pair.first.rank >= config.dig(:flop, :pocket_pair)
+  end
+
+  def passing_river_hidden_pair?
+    return false unless pair = hand.hidden_pair_only
+
+    pair.first.rank >= config.dig(:river, :hidden_pair)
+  end
+
+  def passing_river_outs?
+    hand.outs < config.dig(:river, :outs)
   end
 
   def passing_hidden_pair?
