@@ -4,33 +4,8 @@ RSpec.describe Strategy do
   describe "#bet?" do
     subject { strategy.bet? }
 
-    let(:strategy) { Strategy.new(config) }
+    let(:strategy) { Strategy.new }
     let(:hand) { Hand.call(cards) }
-    let(:config) do
-      {
-        pre_flop: {
-          suited: { king: 2, queen: 6, jack: 8 },
-          unsuited: {
-            ace: 2,
-            king: 5,
-            queen: 8,
-            jack: 10
-          },
-          pair: 3
-        },
-        flop: {
-          hand_type: :two_pair,
-          hidden_pair: 2,
-          pocket_pair: 3,
-          four_to_flush_hidden: 10
-        },
-        river: {
-          hidden_pair: 2,
-          hand_type: :two_pair,
-          outs: 21
-        }
-      }
-    end
 
     before { strategy.hand = hand }
 

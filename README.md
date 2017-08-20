@@ -1,6 +1,6 @@
 # Uths
 
-### Ultimate Texas Hold 'Em Strategizer
+### Ultimate Texas Hold 'Em Strategizer (work in progress)
 
 ## Installation
 

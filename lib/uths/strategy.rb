@@ -1,8 +1,32 @@
 class Strategy
   attr_accessor :hand
 
-  def initialize(config)
-    @config = config
+  DEFAULT_CONFIGURATION = {
+    pre_flop: {
+      suited: { king: 2, queen: 6, jack: 8 },
+      unsuited: {
+        ace:   2,
+        king:  5,
+        queen: 8,
+        jack:  10
+      },
+      pair: 3
+    },
+    flop: {
+      hand_type:            :two_pair,
+      hidden_pair:          2,
+      pocket_pair:          3,
+      four_to_flush_hidden: 10
+    },
+    river: {
+      hidden_pair: 2,
+      hand_type:   :two_pair,
+      outs:        21
+    }
+  }
+
+  def initialize(config = nil)
+    @config = config || DEFAULT_CONFIGURATION
     @hand = nil
   end
 
@@ -32,8 +56,20 @@ class Strategy
     passing_river_hand? || passing_river_hidden_pair? || passing_river_outs?
   end
 
-  def passing_river_hand?
-    hand.better_or_equal_to?(config.dig(:river, :hand_type))
+  def passing_suited?
+    return false unless suited?
+
+    !!pre_flop_match(:suited)
+  end
+
+  def passing_unsuited?
+    !!pre_flop_match(:unsuited)
+  end
+
+  def passing_pair?
+    return false unless hand.type == :pair
+
+    cards.first.rank >= config.dig(:pre_flop, :pair)
   end
 
   def passing_flop_hand?
@@ -44,16 +80,6 @@ class Strategy
     return false unless pair = hand.pocket_pair
 
     pair.first.rank >= config.dig(:flop, :pocket_pair)
-  end
-
-  def passing_river_hidden_pair?
-    return false unless pair = hand.hidden_pair_only
-
-    pair.first.rank >= config.dig(:river, :hidden_pair)
-  end
-
-  def passing_river_outs?
-    hand.outs < config.dig(:river, :outs)
   end
 
   def passing_hidden_pair?
@@ -71,20 +97,14 @@ class Strategy
     end
   end
 
-  def passing_suited?
-    return false unless suited?
-
-    !!pre_flop_match(:suited)
+  def passing_river_hand?
+    hand.better_or_equal_to?(config.dig(:river, :hand_type))
   end
 
-  def passing_unsuited?
-    !!pre_flop_match(:unsuited)
-  end
+  def passing_river_hidden_pair?
+    return false unless pair = hand.hidden_pair_only
 
-  def passing_pair?
-    return false unless hand.type == :pair
-
-    cards.first.rank >= config.dig(:pre_flop, :pair)
+    pair.first.rank >= config.dig(:river, :hidden_pair)
   end
 
   def pre_flop_match(type)
@@ -93,6 +113,10 @@ class Strategy
         (cards - [high_card]).first.rank >= kicker
       end
     end
+  end
+
+  def passing_river_outs?
+    hand.outs < config.dig(:river, :outs)
   end
 
   def suited?
