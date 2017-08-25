@@ -90,6 +90,10 @@ class Hand
     cards.count == 7
   end
 
+  def size
+    cards.count
+  end
+
   private
 
   # Define some convenience methods, e.g. two_of_hearts,

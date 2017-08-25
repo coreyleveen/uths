@@ -340,4 +340,12 @@ RSpec.describe Hand do
       it { is_expected.to eq(false) }
     end
   end
+
+  describe "#size" do
+    subject { hand.size }
+
+    let(:cards) { [ace_of_spades, two_of_hearts] }
+
+    it { is_expected.to eq(2) }
+  end
 end

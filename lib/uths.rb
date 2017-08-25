@@ -20,3 +20,11 @@ module Uths
     14 => "ace"
   }
 end
+
+require "uths/card"
+require "uths/deck"
+require "uths/hand"
+require "uths/dealer"
+require "uths/player"
+require "uths/strategy"
+require "uths/round"
