@@ -195,8 +195,22 @@ class Hand
         middle     = cards[1...-1]
         first_five = cards.first(5)
 
-        [last_five, middle, first_five].detect do |set|
-          consecutive?(set)
+        high_straight_flush = [last_five, middle, first_five].detect do |set|
+          consecutive?(set) && set.map(&:suit).uniq.one?
+        end
+
+        return high_straight_flush if high_straight_flush
+
+        if low_straight?
+          straight_flush = [
+            send("ace_of_#{flush_suit}"),
+            send("two_of_#{flush_suit}"),
+            send("three_of_#{flush_suit}"),
+            send("four_of_#{flush_suit}"),
+            send("five_of_#{flush_suit}")
+          ]
+
+          straight_flush.all? && straight_flush
         end
       end
     end

@@ -86,6 +86,13 @@ RSpec.describe Hand do
       its(:type) { is_expected.to eq(:straight_flush) }
       its(:best) { is_expected.to eq([two_of_spades, three_of_spades, four_of_spades, five_of_spades, six_of_spades]) }
       its(:rest) { is_expected.to eq([ace_of_spades, ten_of_hearts]) }
+
+      context "low straight flush" do
+        let(:table_cards) { [three_of_spades, four_of_spades, five_of_spades, six_of_diamonds, ten_of_hearts] }
+
+        its(:type) { is_expected.to eq(:straight_flush) }
+        its(:best) { is_expected.to eq([ace_of_spades, two_of_spades, three_of_spades, four_of_spades, five_of_spades]) }
+      end
     end
 
     context "royal flush" do
