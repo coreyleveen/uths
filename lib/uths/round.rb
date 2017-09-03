@@ -1,4 +1,23 @@
 class Round
+  TRIPS_BET_MULTIPLIERS = {
+    trips:          3,
+    straight:       4,
+    flush:          7,
+    full_house:     8,
+    quads:          30,
+    straight_flush: 40,
+    royal_flush:    50
+  }
+
+  BLIND_BET_MULTIPLIERS = {
+    straight:       1,
+    flush:          1.5,
+    full_house:     3,
+    quads:          10,
+    straight_flush: 50,
+    royal_flush:    500
+  }
+
   attr_reader :player, :dealer, :ante, :blind_bet, :trips_bet, :play_bet
 
   def initialize(player:, dealer:, ante: 100, trips_bet: nil)
@@ -31,11 +50,17 @@ class Round
 
         if player.bet?
           @play_bet = ante
-        else
-          fold_player
         end
       end
     end
+
+    if player_wins?
+      award_chips
+    elsif player_loses?
+      deduct_chips
+    end
+
+    award_trips_bet
   end
 
   def cards
@@ -44,12 +69,32 @@ class Round
 
   private
 
-  def fold_player
-    trigger_loss
+  def player_wins?
+    player.hand > dealer.hand
   end
 
-  def trigger_loss
+  def player_loses?
+    player.hand < dealer.hand
+  end
+
+  def award_chips
+    player.chips += blind_bet_award
+  end
+
+  def deduct_chips
     player.chips -= pot
+  end
+
+  def award_trips_bet
+    player.chips += trips_bet_award
+  end
+
+  def trips_bet_award
+    TRIPS_BET_MULTIPLIERS.fetch(player.hand.type, 0) * trips_bet
+  end
+
+  def blind_bet_award
+    BLIND_BET_MULTIPLIERS.fetch(player.hand.type, 0) * blind_bet
   end
 
   def pot
