@@ -67,4 +67,24 @@ RSpec.describe Dealer do
     it { is_expected.to change { dealer.hand.size }.from(5).to(7) }
     it { is_expected.to change { player.hand.size }.from(5).to(7) }
   end
+
+  describe "#qualifies?" do
+    subject { dealer.qualifies? }
+
+    before { dealer.hand = hand }
+
+    let(:hand) { Hand.call(cards) }
+
+    context "when the dealer has a pair or better" do
+      let(:cards) { [ten_of_hearts, ten_of_diamonds] }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the dealer has a high-card hand" do
+      let(:cards) { [ten_of_hearts, nine_of_diamonds] }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end

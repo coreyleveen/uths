@@ -16,6 +16,10 @@ class Dealer
     player.hand = Hand.call(player_pocket + flop + river)
   end
 
+  def qualifies?
+    hand.better_or_equal_to?(:pair)
+  end
+
   def cards
     @cards ||= Deck.new.shuffle
   end

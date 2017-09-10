@@ -89,55 +89,84 @@ RSpec.describe Round do
   end
 
   describe "player winnings" do
+    context "when the dealer qualifies" do
+      let(:dealer_pocket) { [nine_of_spades, king_of_spades] }
+
+      context "and the player wins" do
+        let(:player_pocket) { [king_of_spades, king_of_diamonds] }
+        # blind, ante, play bets win
+        it { expect { round.play }.to change { player.chips }.by(+600) }
+      end
+
+      context "and the player loses" do
+        # blind, ante, play bets lose
+        it { expect { round.play }.to change { player.chips }.by(-700) }
+      end
+    end
+
+    context "when the dealer does not qualify" do
+      context "and the player wins" do
+        # blind, play bets win, ante push
+        it { expect { round.play }.to change { player.chips }.by(+500) }
+      end
+
+      context "and the player loses" do
+        let(:player_pocket) { [four_of_hearts, jack_of_clubs] }
+
+        # blind, play bets lose, ante push
+        it { expect { round.play }.to change { player.chips }.by(-200) }
+      end
+    end
+
     context "when the player has trips" do
       let(:player_pocket) { [three_of_spades, three_of_clubs] }
 
-      it { expect { round.play }.to change { player.chips }.by(+300) }
+      it { expect { round.play }.to change { player.chips }.by(+800) }
 
       context "and the player loses the hand" do
         let(:dealer_pocket) { [queen_of_spades, queen_of_clubs] }
 
-        it { expect { round.play }.to change { player.chips }.by(-300) }
+        it { expect { round.play }.to change { player.chips }.by(-400) }
       end
     end
 
     context "when the player has a straight" do
       let(:flop) { [two_of_hearts, four_of_clubs, five_of_diamonds] }
 
-      it { expect { round.play }.to change { player.chips }.by(+500) }
+      it { expect { round.play }.to change { player.chips }.by(+1100) }
     end
 
     context "when the player has a flush" do
       let(:player_pocket) { [ace_of_clubs, two_of_clubs] }
       let(:flop) { [four_of_clubs, nine_of_clubs, ten_of_clubs] }
 
-      it { expect { round.play }.to change { player.chips }.by(+850) }
+      it { expect { round.play }.to change { player.chips }.by(+1350) }
     end
 
     context "when the player has a full house" do
       let(:flop) { [ace_of_spades, ace_of_diamonds, three_of_hearts] }
 
-      it { expect { round.play }.to change { player.chips }.by(+1100) }
+      it { expect { round.play }.to change { player.chips }.by(+1700) }
     end
 
     context "when the player has quads" do
       let(:flop) { [ace_of_spades, ace_of_diamonds, ace_of_hearts] }
 
-      it { expect { round.play }.to change { player.chips }.by(+4000) }
+      it { expect { round.play }.to change { player.chips }.by(+4600) }
     end
 
     context "when the player has a straight flush" do
       let(:player_pocket) { [ace_of_spades, two_of_spades] }
       let(:flop) { [three_of_spades, four_of_spades, five_of_spades] }
 
-      it { expect { round.play }.to change { player.chips }.by(+9000) }
+      it { expect { round.play }.to change { player.chips }.by(+9600) }
     end
 
     context "when the player has a royal flush" do
       let(:player_pocket) { [ace_of_spades, king_of_spades] }
       let(:flop) { [queen_of_spades, jack_of_spades, ten_of_spades] }
 
-      it { expect { round.play }.to change { player.chips }.by(55_000) }
+      it { expect { round.play }.to change { player.chips }.by(55_600) }
     end
   end
 end
