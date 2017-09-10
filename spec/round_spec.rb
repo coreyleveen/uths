@@ -94,18 +94,28 @@ RSpec.describe Round do
 
       context "and the player wins" do
         let(:player_pocket) { [king_of_spades, king_of_diamonds] }
+
         # blind, ante, play bets win
         it { expect { round.play }.to change { player.chips }.by(+600) }
       end
 
       context "and the player loses" do
+
         # blind, ante, play bets lose
         it { expect { round.play }.to change { player.chips }.by(-700) }
+      end
+
+      context "and there is a tie" do
+        let(:dealer_pocket) { [ace_of_spades, three_of_clubs] }
+
+        # all bets push
+        it { expect { round.play }.to_not change { player.chips } }
       end
     end
 
     context "when the dealer does not qualify" do
       context "and the player wins" do
+
         # blind, play bets win, ante push
         it { expect { round.play }.to change { player.chips }.by(+500) }
       end
@@ -115,6 +125,13 @@ RSpec.describe Round do
 
         # blind, play bets lose, ante push
         it { expect { round.play }.to change { player.chips }.by(-200) }
+      end
+
+      context "and there is a tie" do
+        let(:player_pocket) { [king_of_clubs, six_of_diamonds] }
+
+        # all bets push
+        it { expect { round.play }.to_not change { player.chips } }
       end
     end
 
