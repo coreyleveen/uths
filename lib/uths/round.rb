@@ -78,30 +78,23 @@ class Round
   end
 
   def award_chips
-    player.chips += blind_bet_award + play_bet + ante_bet_award
+    player.chips += + play_bet + ante_bet_award + blind_bet_award
   end
 
   def deduct_chips
-    if dealer.qualifies?
-      player.chips -= ante + play_bet + trips_bet + blind_bet
-    else
-      player.chips -= play_bet + trips_bet + blind_bet
-    end
+    player.chips -= play_bet + trips_bet + blind_bet
+    player.chips -= ante if dealer.qualifies?
   end
 
   def award_trips_bet
-    player.chips += trips_bet_award
+    player.chips += TRIPS_BET_MULTIPLIERS.fetch(player.hand.type, 0) * trips_bet
   end
 
   def ante_bet_award
     dealer.qualifies? ? ante : 0
   end
 
-  def trips_bet_award
-    TRIPS_BET_MULTIPLIERS.fetch(player.hand.type, 0) * trips_bet
-  end
-
   def blind_bet_award
-    (BLIND_BET_MULTIPLIERS.fetch(player.hand.type, 0) * blind_bet)
+    BLIND_BET_MULTIPLIERS.fetch(player.hand.type, 0) * blind_bet
   end
 end
