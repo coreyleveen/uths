@@ -102,6 +102,6 @@ class Round
   end
 
   def blind_bet_award
-    (BLIND_BET_MULTIPLIERS.fetch(player.hand.type, 0) * blind_bet) + blind_bet
+    (BLIND_BET_MULTIPLIERS.fetch(player.hand.type, 0) * blind_bet)
   end
 end
