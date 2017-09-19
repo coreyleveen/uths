@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe Dealer do
   let(:dealer) { Dealer.new }
-  let(:player) { Player.new(chips: 5_000, strategy: Strategy.new) }
+  let(:player) { Player.new(chips: 5_000) }
 
   before { dealer.player = player }
 

@@ -20,9 +20,9 @@ class Round
 
   attr_reader :player, :dealer, :ante, :blind_bet, :trips_bet, :play_bet
 
-  def initialize(player:, dealer:, ante: 100, trips_bet: nil)
+  def initialize(player:, ante: 100, trips_bet: nil)
     @player    = player
-    @dealer    = dealer
+    @dealer    = Dealer.new
     @ante      = ante
     @blind_bet = ante
     @trips_bet = trips_bet || ante

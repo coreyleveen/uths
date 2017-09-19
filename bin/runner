@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "pry"
+require "uths"
+
+player = Player.new(chips: 5_000)
+
+loop do
+  Round.new(player: player).play
+end

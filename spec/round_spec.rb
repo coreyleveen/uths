@@ -1,9 +1,9 @@
 require "spec_helper"
 
 RSpec.describe Round do
-  let(:round) { Round.new(player: player, dealer: dealer) }
-  let(:player) { Player.new(chips: 5_000, strategy: Strategy.new) }
-  let(:dealer) { Dealer.new }
+  let(:round) { Round.new(player: player) }
+  let(:player) { Player.new(chips: 5_000) }
+  let(:dealer) { round.dealer }
 
 
   let(:player_pocket) { [ace_of_clubs, three_of_diamonds] }

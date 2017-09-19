@@ -1,7 +1,7 @@
 class Player
   attr_accessor :hand, :chips
 
-  def initialize(chips:, strategy:)
+  def initialize(chips:, strategy: Strategy.new)
     @chips    = chips
     @strategy = strategy
     @hand     = nil

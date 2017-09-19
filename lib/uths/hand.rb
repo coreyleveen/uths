@@ -168,9 +168,10 @@ class Hand
 
   def full_house
     if trips = repeating_cards(n: 3)
-      @determinant = trips
 
       if pair = repeating_cards(set: cards - trips, n: 2)
+        @determinant = trips
+
         trips + pair
       end
     end
