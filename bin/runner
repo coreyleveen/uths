@@ -6,6 +6,4 @@ require "uths"
 
 player = Player.new(chips: 5_000)
 
-loop do
-  Round.new(player: player).play
-end
+10.times { Round.new(player: player).play }

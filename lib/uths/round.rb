@@ -78,7 +78,7 @@ class Round
   end
 
   def award_chips
-    player.chips += + play_bet + ante_bet_award + blind_bet_award
+    player.chips += play_bet + ante_bet_award + blind_bet_award
   end
 
   def deduct_chips
