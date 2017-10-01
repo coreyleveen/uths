@@ -10,6 +10,7 @@ require "uths/player"
 require "uths/strategy"
 require "uths/dealer"
 require "uths/round"
+require "uths/logger"
 
 
 Deck.new.shuffle.each do |card|
