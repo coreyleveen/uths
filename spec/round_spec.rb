@@ -96,7 +96,7 @@ RSpec.describe Round do
         let(:player_pocket) { [king_of_spades, king_of_diamonds] }
 
         # blind, ante, play bets win
-        it { expect { round.play }.to change { player.chips }.by(+500) }
+        it { expect { round.play }.to change { player.chips }.by(+400) }
       end
 
       context "and the player loses" do
@@ -108,30 +108,30 @@ RSpec.describe Round do
       context "and there is a tie" do
         let(:dealer_pocket) { [ace_of_spades, three_of_clubs] }
 
-        # all bets push
-        it { expect { round.play }.to_not change { player.chips } }
+        # all bets push - player loses trips bet
+        it { expect { round.play }.to change { player.chips }.by(-100) }
       end
     end
 
     context "when the dealer does not qualify" do
       context "and the player wins" do
 
-        # blind, play bets win, ante push
-        it { expect { round.play }.to change { player.chips }.by(+400) }
+        # blind returned, play bets win, ante push
+        it { expect { round.play }.to change { player.chips }.by(+300) }
       end
 
       context "and the player loses" do
         let(:player_pocket) { [four_of_hearts, jack_of_clubs] }
 
-        # blind, play bets lose, ante push
+        # player folds without play bet, loses blind and trips bet, ante push
         it { expect { round.play }.to change { player.chips }.by(-200) }
       end
 
       context "and there is a tie" do
         let(:player_pocket) { [king_of_clubs, six_of_diamonds] }
 
-        # all bets push
-        it { expect { round.play }.to_not change { player.chips } }
+        # all bets push, player loses trips bet
+        it { expect { round.play }.to change { player.chips }.by(-100) }
       end
     end
 
@@ -143,7 +143,7 @@ RSpec.describe Round do
       context "and the player loses the hand" do
         let(:dealer_pocket) { [queen_of_spades, queen_of_clubs] }
 
-        it { expect { round.play }.to change { player.chips }.by(-400) }
+        it { expect { round.play }.to change { player.chips }.by(-300) }
       end
     end
 

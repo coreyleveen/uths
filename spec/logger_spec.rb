@@ -4,6 +4,10 @@ RSpec.describe Logger do
   describe ".log" do
     subject { -> { Logger.log(text) } }
 
+    before do
+      File.delete(filename) if File.file?(filename)
+    end
+
     let(:text) { "Testing the logger" }
     let(:filename) { described_class::LOG_FILENAME }
     let(:content) { File.read(filename) }

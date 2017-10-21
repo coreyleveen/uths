@@ -21,6 +21,10 @@ module Uths
   }
 end
 
+def log(text)
+  Logger.log(text)
+end
+
 require "uths/card"
 require "uths/deck"
 require "uths/hand"
@@ -28,3 +32,4 @@ require "uths/dealer"
 require "uths/player"
 require "uths/strategy"
 require "uths/round"
+require "uths/logger"

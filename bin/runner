@@ -4,6 +4,10 @@ require "bundler/setup"
 require "pry"
 require "uths"
 
+File.delete("log") if File.file?("log")
+
 player = Player.new(chips: 5_000)
 
-10.times { Round.new(player: player).play }
+1000.times { Round.new(player: player).play }
+
+puts File.read("log")

@@ -65,7 +65,7 @@ class Hand
   end
 
   def flush_suit(n: 5)
-    return nil unless cards.count >= n
+    return unless cards.count >= n
 
     Uths::SUITS.detect do |suit|
       suits.count(suit) >= n

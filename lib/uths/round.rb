@@ -27,6 +27,7 @@ class Round
     @blind_bet = ante
     @trips_bet = trips_bet || ante
     @play_bet  = 0
+    @folded    = false
   end
 
   def play
@@ -50,17 +51,22 @@ class Round
 
         if player.bet?
           @play_bet = ante
+        else
+          fold
         end
       end
     end
 
-    if player_wins?
+    if player_folded?
+      deduct_chips
+    elsif player_wins?
+
       award_chips
     elsif player_loses?
       deduct_chips
     end
 
-    award_trips_bet
+    handle_trips_bet
   end
 
   def cards
@@ -68,6 +74,14 @@ class Round
   end
 
   private
+
+  def fold
+    @folded = true
+  end
+
+  def player_folded?
+    @folded
+  end
 
   def player_wins?
     player.hand > dealer.hand
@@ -82,12 +96,21 @@ class Round
   end
 
   def deduct_chips
-    player.chips -= play_bet + trips_bet + blind_bet
-    player.chips -= ante if dealer.qualifies?
+    player.chips -= play_bet + blind_bet
+
+    if dealer.qualifies?
+      player.chips -= ante
+    end
   end
 
-  def award_trips_bet
-    player.chips += TRIPS_BET_MULTIPLIERS.fetch(player.hand.type, 0) * trips_bet
+  def handle_trips_bet
+    amount = TRIPS_BET_MULTIPLIERS.fetch(player.hand.type, 0) * trips_bet
+
+    if amount.zero?
+      player.chips -= trips_bet
+    else
+      player.chips += amount
+    end
   end
 
   def ante_bet_award
