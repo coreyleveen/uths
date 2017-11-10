@@ -1,32 +1,10 @@
+require 'yaml'
+
 class Strategy
   attr_accessor :hand
 
-  DEFAULT_CONFIGURATION = {
-    pre_flop: {
-      suited: { king: 2, queen: 6, jack: 8 },
-      unsuited: {
-        ace:   2,
-        king:  5,
-        queen: 8,
-        jack:  10
-      },
-      pair: 3
-    },
-    flop: {
-      hand_type:            :two_pair,
-      hidden_pair:          2,
-      pocket_pair:          3,
-      four_to_flush_hidden: 10
-    },
-    river: {
-      hidden_pair: 2,
-      hand_type:   :two_pair,
-      outs:        21
-    }
-  }
-
-  def initialize(config = nil)
-    @config = config || DEFAULT_CONFIGURATION
+  def initialize(rules = nil)
+    @rules = rules || YAML.load(Uths::STRATEGY)
     @hand = nil
   end
 
@@ -42,7 +20,7 @@ class Strategy
 
   private
 
-  attr_reader :config
+  attr_reader :rules
 
   def passing_pre_flop?
     passing_suited? || passing_unsuited? || passing_pair?
@@ -69,46 +47,46 @@ class Strategy
   def passing_pair?
     return false unless hand.type == :pair
 
-    cards.first.rank >= config.dig(:pre_flop, :pair)
+    cards.first.rank >= rules.dig(:pre_flop, :pair)
   end
 
   def passing_flop_hand?
-    hand.better_or_equal_to?(config.dig(:flop, :hand_type))
+    hand.better_or_equal_to?(rules.dig(:flop, :hand_type))
   end
 
   def passing_pocket_pair?
     return false unless pair = hand.pocket_pair
 
-    pair.first.rank >= config.dig(:flop, :pocket_pair)
+    pair.first.rank >= rules.dig(:flop, :pocket_pair)
   end
 
   def passing_hidden_pair?
     return false unless pair = hand.hidden_pair_only
 
-    pair.first.rank >= config.dig(:flop, :hidden_pair)
+    pair.first.rank >= rules.dig(:flop, :hidden_pair)
   end
 
   def passing_four_to_flush?
     return false unless suit = hand.flush_suit(n: 4)
 
     hand.pocket.any? do |card|
-      card.rank >= config.dig(:flop, :four_to_flush_hidden) &&
+      card.rank >= rules.dig(:flop, :four_to_flush_hidden) &&
         card.suit.downcase == suit
     end
   end
 
   def passing_river_hand?
-    hand.better_or_equal_to?(config.dig(:river, :hand_type))
+    hand.better_or_equal_to?(rules.dig(:river, :hand_type))
   end
 
   def passing_river_hidden_pair?
     return false unless pair = hand.hidden_pair_only
 
-    pair.first.rank >= config.dig(:river, :hidden_pair)
+    pair.first.rank >= rules.dig(:river, :hidden_pair)
   end
 
   def pre_flop_match(type)
-    config.dig(:pre_flop, type).detect do |suit, kicker|
+    rules.dig(:pre_flop, type).detect do |suit, kicker|
       if high_card = cards.detect(&suit)
         (cards - [high_card]).first.rank >= kicker
       end
@@ -116,7 +94,7 @@ class Strategy
   end
 
   def passing_river_outs?
-    hand.outs < config.dig(:river, :outs)
+    hand.outs < rules.dig(:river, :outs)
   end
 
   def suited?

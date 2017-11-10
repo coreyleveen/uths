@@ -19,6 +19,8 @@ module Uths
     13 => "king",
     14 => "ace"
   }
+
+  STRATEGY = File.read("config/strategy.yaml")
 end
 
 def log(text)
