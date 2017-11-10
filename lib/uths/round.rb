@@ -60,6 +60,7 @@ class Round
     if player_folded?
       deduct_chips
     elsif player_wins?
+      player.wins += 1
 
       award_chips
     elsif player_loses?

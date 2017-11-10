@@ -4,10 +4,19 @@ require "bundler/setup"
 require "pry"
 require "uths"
 
-File.delete("log") if File.file?("log")
-
 player = Player.new(chips: 5_000)
 
-1000.times { Round.new(player: player).play }
+round_count = 1_000_000
 
-puts File.read("log")
+progress_counter = 0
+progress_count = round_count / 100
+
+round_count.times do
+  Round.new(player: player).play
+  progress_counter += 1
+
+  print(".") if progress_counter % progress_count == 0
+end
+
+puts "Player won #{player.wins} times out of #{round_count} rounds"
+puts "This is a #{(player.wins / round_count.to_f) * 100}% rate of winning"
