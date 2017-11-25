@@ -44,6 +44,21 @@ RSpec.describe Dealer do
     end
 
     it { is_expected.to change { dealer.cards.count }.from(52).to(48) }
+
+    context "when dealing the player specific cards" do
+      subject { -> { dealer.deal_pocket(cards) } }
+
+      let(:cards) { %i(king_of_spades two_of_spades) }
+
+      it do
+        subject.call
+
+        expect(player.hand.cards.max).to be_king_of_spades
+        expect(player.hand.cards.min).to be_two_of_spades
+
+        expect(dealer.cards.count).to eq(48)
+      end
+    end
   end
 
   describe "#deal_flop" do

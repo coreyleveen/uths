@@ -1,7 +1,17 @@
 class Dealer
   attr_accessor :hand, :player
 
-  def deal_pocket
+  def deal_pocket(player_cards = [])
+    if player_cards.any?
+      first, second = player_cards
+
+      @player_pocket = cards.select do |card|
+        card.public_send(first) || card.public_send(second)
+      end
+
+      @cards -= @player_pocket
+    end
+
     self.hand   = Hand.call(dealer_pocket)
     player.hand = Hand.call(player_pocket)
   end

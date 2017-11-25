@@ -6,7 +6,7 @@ RSpec.describe Card do
   describe "#suit" do
     subject { card.suit }
 
-    it { is_expected.to eq("Spades") }
+    it { is_expected.to eq("spades") }
   end
 
   describe "#rank" do
@@ -28,9 +28,9 @@ RSpec.describe Card do
   end
 
   describe "#<=>" do
-    let(:queen) { Card.new(suit: "Hearts", rank: 12) }
-    let(:jack)  { Card.new(suit: "Hearts", rank: 11) }
-    let(:other_queen) { Card.new(suit: "Clubs", rank: 12) }
+    let(:queen) { Card.new(suit: "hearts", rank: 12) }
+    let(:jack)  { Card.new(suit: "hearts", rank: 11) }
+    let(:other_queen) { Card.new(suit: "clubs", rank: 12) }
 
     it { expect(queen).to be > jack }
     it { expect(jack).to be < queen }
@@ -41,7 +41,7 @@ RSpec.describe Card do
     subject { card.two? }
 
     context "when the card has a rank of two" do
-      let(:card) { Card.new(suit: "Spades", rank: 2) }
+      let(:card) { Card.new(suit: "spades", rank: 2) }
 
       it { is_expected.to eq(true) }
     end
@@ -53,9 +53,25 @@ RSpec.describe Card do
     context "without the question mark" do
       subject { card.two }
 
-      let(:card) { Card.new(suit: "Spades", rank: 2) }
+      let(:card) { Card.new(suit: "spades", rank: 2) }
 
       it { is_expected.to eq(true) }
+    end
+  end
+
+  describe "card methods" do
+    subject { card.queen_of_spades? }
+
+    context "when the card is a queen of spades" do
+      let(:card) { Card.new(suit: "spades", rank: 12) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the card is not a queen of spades" do
+      let(:card) { Card.new(suit: "spades", rank: 10) }
+
+      it { is_expected.to eq(false) }
     end
   end
 end
